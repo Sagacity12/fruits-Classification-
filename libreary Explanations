@@ -1,0 +1,38 @@
+ImageDataGenerator: For loading images and applying data augmentation.
+VGG16: Pre-trained model used for transfer learning.
+Sequential: For building a sequential model.
+Dense, Flatten, Dropout, BatchNormalization: Layers to customize the model architecture.
+ReduceLROnPlateau, EarlyStopping: Callbacks for optimizing training.
+
+Set up data generators for training, validation, and testing with augmentation
+Explanation: Data generators load images from directories, rescale them, and apply augmentation on the training set to help the model generalize better.
+Validation and test sets are only rescaled (no augmentation).
+
+train_datagen: Applies rescaling and augmentation (e.g., rotation, zoom) to make the model more robust.
+val_datagen and test_datagen: Only rescale images for validation/testing.
+flow_from_directory: Loads images from specified folders into batches for training/validation/testing.
+
+Define the VGG16-based model architecture with custom layers
+Explanation: This task involves loading the pre-trained VGG16 model (excluding the top layers) and adding custom layers to adapt it to the fruit classification task.
+
+base_model: Loads VGG16, excluding its dense layers (include_top=False).
+for layer in base_model.layers: Freezes VGG16 layers to retain pre-trained weights.
+Custom layers: Flatten the output, then add dense layers with regularization (Dropout) and normalization (BatchNormalization) to enhance learning.
+
+COMPILE the model
+Explanation:
+categorical_crossentropy: Used because this is a multi-class classification task.
+adam: Adaptive learning rate optimizer that helps in faster convergence.
+metrics=['accuracy']: Tracks model accuracy.
+
+ReduceLROnPlateau: Reduces learning rate when validation loss plateaus, allowing better optimization.
+EarlyStopping: Stops training when validation loss no longer improves, preventing overfitting.
+model.fit: Trains the model on the train_generator and evaluates on val_generator each epoch.
+
+
+for layer in base_model.layers[-5:]: Unfreezes the last 5 layers to allow fine-tuning.
+Unfreezing fewer layers is faster and prevents overfitting on small datasets.
+RMSprop(learning_rate=1e-5): Optimizer with a lower learning rate to fine-tune carefully without drastic weight changes.
+
+model.evaluate(test_generator):
+Evaluates the model on the test set and prints accuracy, giving a final measure of model performance.
